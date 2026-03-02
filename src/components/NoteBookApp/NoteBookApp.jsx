@@ -1,14 +1,71 @@
-import { LayoutGrid, Star, CheckCircle2, Maximize2, Plus, Search, Hash, Settings, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { LayoutGrid, Star, Check, CheckCircle2, Maximize2, Plus, Search, Hash, Settings, Clock } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import supabase from '../../Helper/Supabase/Supabase';
 
 const NoteBookApp = () => {
-
+    const [filter, setFilter] = useState('all')
     const [notes, setNotes] = useState([])
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [isActive, setIsActive] = useState(false)
 
+
+    // All the notes are here
+    const filterNotes = notes.filter(note => {
+        if (filter === 'done') return note.iscompleted;
+        if (filter === 'favs') return note.isfavourite;
+        return true;
+    })
+
+    useEffect(() => {
+        fetchTodo()
+    }, [])
+
+    // toggle Complete function
+    async function toggleComplete(id, currentStatus) {
+
+        const { data, error } = await supabase
+            .from("notes")
+            .update({ iscompleted: !currentStatus })
+            .eq("id", id)
+            .select()
+
+        if (error) console.error("Error Message:", error.message);
+
+        setNotes(prev =>
+            prev.map(note =>
+                note.id == id ? { ...note, iscompleted: !currentStatus } : note)
+        )
+    }
+
+    // toggle Favourite function
+    async function toggleFavourite(id, currentStatus) {
+        const { data, error } = await supabase
+            .from("notes")
+            .update({ isfavourite: !currentStatus })
+            .eq("id", id)
+            .select()
+
+        if (error) console.error("Error Message:", error.message);
+
+        setNotes(prev =>
+            prev.map(note =>
+                note.id == id ? { ...note, isfavourite: !currentStatus } : note)
+        )
+    }
+
+    //fetch Todo section
+    async function fetchTodo() {
+
+        const { data, error } = await supabase.from("notes").select("*").order("created_at", { ascending: true })
+
+        if (error) console.error("Error Message:", error.message);
+        else {
+            setNotes(data)
+        }
+    }
+
+    //add Todo section
     async function addTodo() {
         if (!title.trim()) return;
 
@@ -18,13 +75,14 @@ const NoteBookApp = () => {
             .select();
 
         if (error) {
-            console.log("Error message:", error.message);
+            console.error("Error message:", error.message);
             return;
         }
 
         setNotes(prev => [...prev, data[0]])
         setTitle("")
         setDescription("")
+        fetchTodo()
         setIsActive(!isActive)
     }
 
@@ -38,30 +96,42 @@ const NoteBookApp = () => {
                 </div>
 
                 <nav className="flex flex-1 flex-col gap-8">
-                    <button className="group relative flex flex-col items-center gap-1 text-indigo-600">
-                        <div className="rounded-xl bg-indigo-50 p-3 transition-all duration-300 group-hover:scale-110">
+                    <button
+                        onClick={() => {
+                            setFilter("all")
+                        }}
+                        className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "all" ? "text-indigo-600" : "text-slate-400"}`}>
+                        <div className={`rounded-xl ${filter === "all" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}>
                             <Clock size={22} />
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-widest">All</span>
                     </button>
 
-                    <button className="group relative flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-600">
-                        <div className="rounded-xl p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110">
+                    <button
+                        onClick={() => {
+                            setFilter("favs")
+                        }}
+                        className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "favs" ? "text-indigo-600" : "text-slate-400"}`}>
+                        <div className={`rounded-xl ${filter === "favs" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}>
                             <Star size={22} />
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-widest">Favs</span>
                     </button>
 
-                    <button className="group relative flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-600">
-                        <div className="rounded-xl p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110">
+                    <button
+                        onClick={() => {
+                            setFilter("done")
+                        }}
+                        className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "done" ? "text-indigo-600" : "text-slate-400"}`}>
+                        <div className={`rounded-xl ${filter === "done" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}>
                             <CheckCircle2 size={22} />
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-widest">Done</span>
                     </button>
                 </nav>
 
-                <button className="rounded-xl p-3 text-slate-400 hover:bg-slate-100 transition-all">
-                    <Settings size={22} />
+                <button className="rounded-xl p-3 text-slate-400 hover:bg-slate-100 transition-all ">
+                    <Settings size={22} className='translate duration-300 hover:rotate-45' />
                 </button>
             </aside>
 
@@ -99,90 +169,70 @@ const NoteBookApp = () => {
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
                     {/* HIGH PRIORITY NOTE (Important) */}
-                    <div className="group relative flex flex-col gap-4 rounded-4xl border border-amber-100 bg-linear-to-br from-amber-50 to-white p-6 shadow-xl shadow-amber-200/40 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-200/60 ring-1 ring-amber-200/50">
-                        <div className="flex items-start justify-between">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400 text-white shadow-md shadow-amber-200">
-                                <Star size={16} fill="currentColor" />
-                            </div>
-                            <button className="rounded-full bg-white/80 p-2 text-slate-400 opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:text-slate-900 shadow-sm border border-slate-100">
-                                <Maximize2 size={14} />
-                            </button>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-slate-900">Q3 Product Strategy</h3>
-                            <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-slate-600">
-                                Finalize the roadmap for the upcoming sprint. Focus on user onboarding friction points and the new API integration patterns.
-                            </p>
-                        </div>
-                        <div className="mt-4 flex flex-wrap gap-2 pt-2">
-                            <span className="flex items-center gap-1 rounded-full bg-amber-100/50 px-3 py-1 text-[11px] font-bold uppercase text-amber-700">#high-priority</span>
-                            <span className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase text-slate-500">2h left</span>
-                        </div>
-                    </div>
+                    {filterNotes.map((note) => (
 
-                    {/* STANDARD NOTE */}
-                    <div className="group relative flex flex-col gap-4 rounded-4xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-slate-300/50">
-                        <div className="flex items-start justify-between">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                                <Hash size={16} />
-                            </div>
-                            <button className="rounded-full bg-white p-2 text-slate-400 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:text-slate-900 border border-slate-100">
-                                <Maximize2 size={14} />
-                            </button>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-slate-900">Weekly Grocery List</h3>
-                            <ul className="mt-2 space-y-1 text-sm text-slate-600">
-                                <li>• Oat milk (Unsweetened)</li>
-                                <li>• Avocados</li>
-                                <li>• Dark chocolate 85%</li>
-                                <li>• Sourdough bread</li>
-                            </ul>
-                        </div>
-                        <div className="mt-auto pt-4 text-[11px] font-medium text-slate-400">Modified 3 mins ago</div>
-                    </div>
+                        <div
+                            key={note.id}
+                            className={`group relative flex flex-col gap-4 rounded-4xl border p-6 shadow-xl transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ring-1 ${note.isfavourite ? "border-rose-200 bg-linear-to-br from-rose-100 via-pink-50 to-white shadow-rose-200/40 ring-rose-200/50" : "border-slate-200 bg-white shadow-slate-200/40 ring-slate-200/50"}`}>
 
-                    {/* COMPLETED NOTE */}
-                    <div className="group relative flex flex-col gap-4 rounded-4xl border border-slate-100 bg-white/60 p-6 opacity-60 transition-all duration-500 hover:opacity-100 grayscale-40 hover:grayscale-0">
-                        <div className="flex items-start justify-between">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-500 shadow-inner">
-                                <CheckCircle2 size={16} />
-                            </div>
-                            <button className="rounded-full bg-white p-2 text-slate-400 opacity-0 shadow-sm transition-all group-hover:opacity-100 border border-slate-100">
-                                <Maximize2 size={14} />
-                            </button>
-                        </div>
-                        <div className="line-through decoration-emerald-500/50 decoration-2">
-                            <h3 className="text-lg font-bold text-slate-400">Design System Audit</h3>
-                            <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                                Check contrast ratios across the new dark mode palette and export SVG assets.
-                            </p>
-                        </div>
-                        <div className="mt-auto flex items-center gap-2 pt-4">
-                            <div className="h-1 flex-1 rounded-full bg-emerald-100">
-                                <div className="h-full w-full rounded-full bg-emerald-400"></div>
-                            </div>
-                            <span className="text-[10px] font-bold text-emerald-600">DONE</span>
-                        </div>
-                    </div>
+                            <div className="flex items-start justify-between">
 
-                    {/* REPEATABLE COMPONENT FOR GRID DEPTH */}
-                    <div className="group relative flex flex-col gap-4 rounded-4xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 transition-all duration-500 hover:scale-[1.02] sm:col-span-2 lg:col-span-1">
-                        <div className="flex items-start justify-between">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500">
-                                <Hash size={16} />
+                                {/* LEFT BUTTONS */}
+                                <div className="flex gap-2">
+
+                                    {/* Favourite Button */}
+                                    <button
+                                        onClick={() => toggleFavourite(note.id, note.isfavourite)}
+                                        className={`flex h-8 w-8 items-center justify-center rounded-lg shadow-md transition-all duration-300 ${note.isfavourite
+                                            ? "bg-rose-500 text-white shadow-rose-200 scale-105"
+                                            : "bg-white text-slate-400 hover:text-rose-500 border border-slate-200"
+                                            }`}>
+                                        <Star
+                                            size={16}
+                                            fill={note.isfavourite ? "currentColor" : "none"}
+                                        />
+                                    </button>
+
+                                    {/* Completed Button */}
+                                    <button
+                                        onClick={() => toggleComplete(note.id, note.iscompleted)}
+                                        className={`flex h-8 w-8 items-center justify-center rounded-lg shadow-md transition-all duration-300 ${note.iscompleted ? "bg-emerald-500 text-white shadow-emerald-200 scale-105" : "bg-white text-slate-400 hover:text-emerald-600 border border-slate-200"}`}>
+                                        <Check size={16} />
+                                    </button>
+
+                                </div>
+
+                                {/* Existing Maximize Button */}
+                                <button className="rounded-full bg-white/80 p-2 text-slate-400 opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:text-slate-900 shadow-sm border border-slate-100">
+                                    <Maximize2 size={14} />
+                                </button>
+
                             </div>
-                            <button className="rounded-full bg-white p-2 text-slate-400 opacity-0 shadow-sm transition-all group-hover:opacity-100 border border-slate-100">
-                                <Maximize2 size={14} />
-                            </button>
+
+                            {/* CONTENT */}
+                            <div>
+                                <h3
+                                    className={`text-lg font-bold ${note.iscompleted ? "line-through text-slate-400" : "text-slate-900"
+                                        }`}>
+                                    {note.title}
+                                </h3>
+                                <p className={`mt-2 line-clamp-4 text-sm leading-relaxed ${note.iscompleted ? "text-slate-400" : "text-slate-600"
+                                    }`}>
+                                    {note.description}
+                                </p>
+                            </div>
+
+                            {/* TAGS */}
+                            <div className="mt-4 flex flex-wrap gap-2 pt-2">
+                                <span className="flex items-center gap-1 rounded-full bg-amber-100/50 px-3 py-1 text-[11px] font-bold uppercase text-amber-700">
+                                    #high-priority
+                                </span>
+                                <span className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase text-slate-500">
+                                    2h left
+                                </span>
+                            </div>
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">Project Launch Ideas</h3>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                            1. Influencer outreach campaign.<br />
-                            2. Early bird access for beta testers.<br />
-                            3. Product Hunt launch video script.
-                        </p>
-                    </div>
+                    ))}
                 </div>
             </main>
 
