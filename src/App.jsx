@@ -1,10 +1,9 @@
-import React from 'react'
-import Todo from './components/Todo/Todo'
+import NoteBookApp from './components/NoteBookApp/NoteBookApp'
 
 const App = () => {
   return (
     <div>
-      <Todo />
+      <NoteBookApp />
     </div>
   )
 }
