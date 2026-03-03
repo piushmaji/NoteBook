@@ -86,6 +86,29 @@ const NoteBookApp = () => {
         setIsActive(!isActive)
     }
 
+
+    function timeAgo(timestamp) {
+        const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            day: 86400,
+            hour: 3600,
+            minute: 60,
+        };
+
+        for (let key in intervals) {
+            const value = Math.floor(seconds / intervals[key]);
+            if (value >= 1) {
+                return `${value} ${key}${value > 1 ? "s" : ""} ago`;
+            }
+        }
+
+        return "Just now";
+    }
+
+
     return (
         <div className="flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
 
@@ -141,7 +164,7 @@ const NoteBookApp = () => {
                 {/* Header Section */}
                 <header className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Focus Hub</h1>
+                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Note Book</h1>
                         <p className="mt-1 text-slate-500">Simplify your thoughts, execute your vision.</p>
                     </div>
 
@@ -228,7 +251,7 @@ const NoteBookApp = () => {
                                     #high-priority
                                 </span>
                                 <span className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase text-slate-500">
-                                    2h left
+                                    {timeAgo(note.created_at)}
                                 </span>
                             </div>
                         </div>
