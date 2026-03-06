@@ -1,5 +1,4 @@
 import NoteBookApp from './components/NoteBookApp/NoteBookApp'
-
 const App = () => {
   return (
     <div>

@@ -1,6 +1,7 @@
 import { LayoutGrid, Star, Check, CheckCircle2, Maximize2, Plus, Search, Settings, Clock, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import supabase from '../../Helper/Supabase/Supabase';
+import Loader from '../Loader/Loader';
 
 const PRIORITIES = [
     { label: "High", value: "high", color: "bg-red-500 text-white shadow-red-200", dot: "bg-red-400" },
@@ -24,6 +25,7 @@ const NoteBookApp = () => {
 
     const [editingNote, setEditingNote] = useState(null)
     const [search, setSearch] = useState("")
+    const [loading, setLoading] = useState(true)
 
     const filterNotes = notes.filter(note => {
         if (filter === 'done') return note.iscompleted;
@@ -63,9 +65,14 @@ const NoteBookApp = () => {
     }
 
     async function fetchTodo() {
+        setLoading(true)
         const { data, error } = await supabase.from("notes").select("*").order("created_at", { ascending: false })
         if (error) console.error("Error Message:", error.message);
         else setNotes(data)
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000);
     }
 
     async function saveNote() {
@@ -137,6 +144,8 @@ const NoteBookApp = () => {
         setPriority(note.priority)
         setIsActive(true)
     }
+
+    if (loading) return <Loader />
 
     return (
         <div className="flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
