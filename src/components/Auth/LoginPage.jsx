@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, ArrowRight, User } from "lucide-react";
 import supabase from '../../Helper/Supabase/Supabase';
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ onLogin }) => {
     const [mode, setMode] = useState("login");
@@ -13,19 +14,24 @@ const LoginPage = ({ onLogin }) => {
     const [error, setError] = useState("");
 
     const isLogin = mode === "login";
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true)
+
         const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password
+            email,
+            password
         })
 
+        setLoading(false)
+
         if (error) {
-            console.log(error.message);
+            setError(error.message)
             return
         }
+        navigate("/")
         setName("")
         setEmail("")
         setPassword("")
@@ -42,15 +48,14 @@ const LoginPage = ({ onLogin }) => {
             console.log(error.message)
             return
         }
-
-        console.log("Logged in:", data)
+        navigate('/')
+        console.log("Logged in:")
     }
     useEffect(() => {
         const getUser = async () => {
             const { data } = await supabase.auth.getUser()
             console.log(data.user)
         }
-
         getUser()
     }, [])
 
@@ -169,7 +174,7 @@ const LoginPage = ({ onLogin }) => {
 
                         {/* Submit — same style as "New Entry" button in NoteBookApp */}
                         <button
-                            onClick={handleSubmit}
+                            onClick={isLogin ? handleLogin : handleSubmit}
                             disabled={loading || !email.trim() || !password.trim()}
                             className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.03] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
                             {loading ? (
@@ -209,7 +214,10 @@ const LoginPage = ({ onLogin }) => {
                         <p className="text-xs text-slate-400">
                             {isLogin ? "Don't have an account? " : "Already have an account? "}
                             <button
-                                onClick={() => { setMode(isLogin ? "signup" : "login"); setError(""); handleLogin }}
+                                onClick={() => {
+                                    setMode(isLogin ? "signup" : "login")
+                                    setError("")
+                                }}
                                 className="font-bold text-slate-700 underline underline-offset-2 hover:text-indigo-600 transition-colors">
                                 {isLogin ? "Sign up free" : "Sign in"}
                             </button>
