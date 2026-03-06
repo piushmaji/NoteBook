@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, ArrowRight, User } from "lucide-react";
 import supabase from '../../Helper/Supabase/Supabase';
 
@@ -15,9 +15,45 @@ const LoginPage = ({ onLogin }) => {
     const isLogin = mode === "login";
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password
+        })
+
+        if (error) {
+            console.log(error.message);
+            return
+        }
+        setName("")
+        setEmail("")
+        setPassword("")
     }
+    const handleLogin = async (e) => {
+        e.preventDefault()
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        })
+
+        if (error) {
+            console.log(error.message)
+            return
+        }
+
+        console.log("Logged in:", data)
+    }
+    useEffect(() => {
+        const getUser = async () => {
+            const { data } = await supabase.auth.getUser()
+            console.log(data.user)
+        }
+
+        getUser()
+    }, [])
+
     return (
         <div className="flex h-screen w-full items-center justify-center bg-slate-50 p-4 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700">
 
@@ -173,7 +209,7 @@ const LoginPage = ({ onLogin }) => {
                         <p className="text-xs text-slate-400">
                             {isLogin ? "Don't have an account? " : "Already have an account? "}
                             <button
-                                onClick={() => { setMode(isLogin ? "signup" : "login"); setError(""); }}
+                                onClick={() => { setMode(isLogin ? "signup" : "login"); setError(""); handleLogin }}
                                 className="font-bold text-slate-700 underline underline-offset-2 hover:text-indigo-600 transition-colors">
                                 {isLogin ? "Sign up free" : "Sign in"}
                             </button>
