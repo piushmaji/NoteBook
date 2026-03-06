@@ -2,6 +2,7 @@ import { LayoutGrid, Star, Check, CheckCircle2, Maximize2, Plus, Search, Setting
 import { useEffect, useState } from 'react';
 import supabase from '../../Helper/Supabase/Supabase';
 import Loader from '../Loader/Loader';
+import Sidebar from '../Sidebar/Sidebar';
 
 const PRIORITIES = [
     { label: "High", value: "high", color: "bg-red-500 text-white shadow-red-200", dot: "bg-red-400" },
@@ -148,32 +149,12 @@ const NoteBookApp = () => {
     if (loading) return <Loader />
 
     return (
-        <div className="flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
+        <div className="relative flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
 
             {/* --- SIDEBAR --- */}
-            <aside className="fixed left-0 top-0 hidden h-full w-20 flex-col items-center border-r border-slate-200/60 bg-white/40 pb-8 pt-8 backdrop-blur-xl lg:flex">
-                <div className="mb-12 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
-                    <LayoutGrid size={24} />
-                </div>
-                <nav className="flex flex-1 flex-col gap-8">
-                    <button onClick={() => setFilter("all")} className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "all" ? "text-indigo-600" : "text-slate-400"}`}>
-                        <div className={`rounded-xl ${filter === "all" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}><Clock size={22} /></div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">All</span>
-                    </button>
-                    <button onClick={() => setFilter("favs")} className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "favs" ? "text-indigo-600" : "text-slate-400"}`}>
-                        <div className={`rounded-xl ${filter === "favs" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}><Star size={22} /></div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Favs</span>
-                    </button>
-                    <button onClick={() => setFilter("done")} className={`group relative flex flex-col items-center gap-1 hover:text-slate-600 ${filter === "done" ? "text-indigo-600" : "text-slate-400"}`}>
-                        <div className={`rounded-xl ${filter === "done" ? "bg-indigo-50" : ""} p-3 transition-all duration-300 group-hover:bg-slate-100 group-hover:scale-110`}><CheckCircle2 size={22} /></div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Done</span>
-                    </button>
-                </nav>
-                <button className="rounded-xl p-3 text-slate-400 hover:bg-slate-100 transition-all">
-                    <Settings size={22} className='translate duration-300 hover:rotate-45' />
-                </button>
-            </aside>
-
+            <div className='absolute z-50'>
+                <Sidebar filter={filter} setFilter={setFilter} />
+            </div>
             {/* --- MAIN CONTENT AREA --- */}
             <main className="ml-0 flex-1 overflow-y-auto p-6 lg:ml-20 lg:p-12">
                 <header className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">

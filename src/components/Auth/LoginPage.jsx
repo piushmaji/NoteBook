@@ -3,17 +3,21 @@ import { LayoutGrid, Eye, EyeOff, Mail, Lock, ArrowRight, User } from "lucide-re
 import supabase from '../../Helper/Supabase/Supabase';
 
 const LoginPage = ({ onLogin }) => {
-    const [mode, setMode] = useState("login"); 
+    const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [showPass, setShowPass] = useState(false);
-    
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const isLogin = mode === "login";
 
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+    }
     return (
         <div className="flex h-screen w-full items-center justify-center bg-slate-50 p-4 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700">
 

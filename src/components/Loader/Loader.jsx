@@ -1,7 +1,7 @@
 const SkeletonCard = ({ favourite = false }) => (
     <div className={`flex flex-col gap-4 rounded-3xl border p-6 shadow-sm
         ${favourite
-            ? "border-rose-200/60 bg-gradient-to-br from-rose-50 via-pink-50 to-white"
+            ? "border-rose-200/60 bg-linear-to-br from-rose-50 via-pink-50 to-white"
             : "border-slate-200/80 bg-white"
         }`}>
 
@@ -37,7 +37,7 @@ const Loader = () => {
         <div className="flex h-screen w-full bg-slate-50 font-sans antialiased overflow-hidden">
 
             {/* ── Sidebar skeleton — matches exact sidebar in screenshot ── */}
-            <aside className="hidden lg:flex fixed left-0 top-0 h-full w-[68px] flex-col items-center border-r border-slate-200/60 bg-white/60 backdrop-blur-xl pb-8 pt-7 gap-0">
+            <aside className="hidden lg:flex fixed left-0 top-0 h-full w-17 flex-col items-center border-r border-slate-200/60 bg-white/60 backdrop-blur-xl pb-8 pt-7 gap-0">
 
                 {/* Logo square */}
                 <div className="h-11 w-11 rounded-2xl shimmer bg-indigo-200 mb-10" />
@@ -62,7 +62,7 @@ const Loader = () => {
             </aside>
 
             {/* ── Main content ── */}
-            <main className="ml-0 lg:ml-[68px] flex-1 overflow-y-auto p-6 lg:px-10 lg:py-8">
+            <main className="ml-0 lg:ml-17 flex-1 overflow-y-auto p-6 lg:px-10 lg:py-8">
 
                 {/* Header skeleton — matches "Note Book" title + search + button */}
                 <header className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-center">
