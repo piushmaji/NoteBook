@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { LayoutGrid, Star, CheckCircle2, Clock, Settings, LogOut, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/Authentication/AuthProvider';
 
 const Sidebar = ({ filter, setFilter }) => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { user, handleLogout } = useAuth()
 
-    const isLoggedIn = false;
+    const isLoggedIn = !!user;
+    const email = user?.email;
+    const displayName = user?.user_metadata?.name || "User";
+    const initials = displayName.split(" ").map(n => n[0]).join("");
 
     return (
         <>
@@ -110,7 +115,9 @@ const Sidebar = ({ filter, setFilter }) => {
 
                                     {/* Sign out */}
                                     <div className="p-1.5">
-                                        <button className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all group">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all group">
                                             <LogOut size={14} className="shrink-0 group-hover:-translate-x-0.5 transition-transform duration-200" />
                                             Sign Out
                                         </button>

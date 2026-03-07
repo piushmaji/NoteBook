@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, ArrowRight, User } from "lucide-react";
 import supabase from '../../Helper/Supabase/Supabase';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/Authentication/AuthProvider";
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
+
     const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,48 +18,50 @@ const LoginPage = ({ onLogin }) => {
     const isLogin = mode === "login";
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
+    const { user, handleLogin, handleSubmit, handleLogout } = useAuth()
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password
-        })
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault()
+    //     setLoading(true)
 
-        setLoading(false)
+    //     const { data, error } = await supabase.auth.signUp({
+    //         email,
+    //         password
+    //     })
 
-        if (error) {
-            setError(error.message)
-            return
-        }
-        navigate("/")
-        setName("")
-        setEmail("")
-        setPassword("")
-    }
-    const handleLogin = async (e) => {
-        e.preventDefault()
+    //     setLoading(false)
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        })
+    //     if (error) {
+    //         setError(error.message)
+    //         return
+    //     }
+    //     navigate("/")
+    //     setName("")
+    //     setEmail("")
+    //     setPassword("")
+    // }
+    // const handleLogin = async (e) => {
+    //     e.preventDefault()
 
-        if (error) {
-            console.log(error.message)
-            return
-        }
-        navigate('/')
-        console.log("Logged in:")
-    }
-    useEffect(() => {
-        const getUser = async () => {
-            const { data } = await supabase.auth.getUser()
-            console.log(data.user)
-        }
-        getUser()
-    }, [])
+    //     const { data, error } = await supabase.auth.signInWithPassword({
+    //         email: email,
+    //         password: password
+    //     })
+
+    //     if (error) {
+    //         console.log(error.message)
+    //         return
+    //     }
+    //     navigate('/')
+    //     console.log("Logged in:")
+    // }
+    // useEffect(() => {
+    //     const getUser = async () => {
+    //         const { data } = await supabase.auth.getUser()
+    //         console.log(data.user)
+    //     }
+    //     getUser()
+    // }, [])
 
     return (
         <div className="flex h-screen w-full items-center justify-center bg-slate-50 p-4 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700">

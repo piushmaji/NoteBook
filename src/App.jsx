@@ -3,12 +3,10 @@ import NoteBookApp from './components/NoteBookApp/NoteBookApp'
 import LoginPage from './components/Auth/LoginPage'
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<NoteBookApp />} />
-        <Route path='/register' element={<LoginPage />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path='/' element={<NoteBookApp />} />
+      <Route path='/register' element={<LoginPage />} />
+    </Routes>
   )
 }
 
