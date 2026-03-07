@@ -20,48 +20,16 @@ const LoginPage = () => {
 
     const { user, handleLogin, handleSubmit, handleLogout } = useAuth()
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault()
-    //     setLoading(true)
+    const handleSignIn = async () => {
+        const err = await handleLogin(email, password)
+        if (err) setError(err)
+    }
 
-    //     const { data, error } = await supabase.auth.signUp({
-    //         email,
-    //         password
-    //     })
+    const handleSignUp = async () => {
+        const err = await handleSubmit(email, password, name)
+        if (err) setError(err)
+    }
 
-    //     setLoading(false)
-
-    //     if (error) {
-    //         setError(error.message)
-    //         return
-    //     }
-    //     navigate("/")
-    //     setName("")
-    //     setEmail("")
-    //     setPassword("")
-    // }
-    // const handleLogin = async (e) => {
-    //     e.preventDefault()
-
-    //     const { data, error } = await supabase.auth.signInWithPassword({
-    //         email: email,
-    //         password: password
-    //     })
-
-    //     if (error) {
-    //         console.log(error.message)
-    //         return
-    //     }
-    //     navigate('/')
-    //     console.log("Logged in:")
-    // }
-    // useEffect(() => {
-    //     const getUser = async () => {
-    //         const { data } = await supabase.auth.getUser()
-    //         console.log(data.user)
-    //     }
-    //     getUser()
-    // }, [])
 
     return (
         <div className="flex h-screen w-full items-center justify-center bg-slate-50 p-4 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700">
@@ -178,7 +146,7 @@ const LoginPage = () => {
 
                         {/* Submit — same style as "New Entry" button in NoteBookApp */}
                         <button
-                            onClick={isLogin ? handleLogin : handleSubmit}
+                            onClick={isLogin ? handleSignIn : handleSignUp}
                             disabled={loading || !email.trim() || !password.trim()}
                             className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.03] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
                             {loading ? (

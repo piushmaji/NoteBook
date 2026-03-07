@@ -8,9 +8,6 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null)
     const [mode, setMode] = useState("login");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
     const [showPass, setShowPass] = useState(false);
 
     const [loading, setLoading] = useState(false);
@@ -35,45 +32,21 @@ export const AuthProvider = ({ children }) => {
         return () => listener.subscription.unsubscribe();
     }, [])
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: { name: name.trim() || "User" }
-            },
-
-        })
-
-        setLoading(false)
-
-        if (error) {
-            setError(error.message)
-            return
-        }
-        navigate("/")
-        setName("")
-        setEmail("")
-        setPassword("")
+    const handleLogin = async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) return error.message
+        navigate('/')
     }
 
-    const handleLogin = async (e) => {
-        e.preventDefault()
-
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
+    const handleSubmit = async (email, password, name) => {
+        setLoading(true)
+        const { data, error } = await supabase.auth.signUp({
+            email, password,
+            options: { data: { name: name.trim() || "User" } }
         })
-
-        if (error) {
-            console.log(error.message)
-            return
-        }
+        setLoading(false)
+        if (error) return error.message
         navigate('/')
-        console.log("Logged in:")
     }
 
 
