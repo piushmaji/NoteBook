@@ -83,7 +83,7 @@ const Sidebar = ({ filter, setFilter }) => {
                         className={`menu-popup ${menuOpen ? "open" : "closed"}`}
                         style={{
                             position: "fixed",
-                            bottom: "24px",
+                            bottom: "72px",
                             left: "88px",
                             width: "210px",
                             zIndex: 9999,

@@ -10,9 +10,9 @@ export const AuthProvider = ({ children }) => {
     const [mode, setMode] = useState("login");
     const [showPass, setShowPass] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true)
     const [error, setError] = useState("");
-
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,13 +20,14 @@ export const AuthProvider = ({ children }) => {
         const getUser = async () => {
             const { data } = await supabase.auth.getUser()
             setUser(data.user)
-
+            setAuthLoading(false)
         }
         getUser();
 
         const { data: listener } = supabase.auth.onAuthStateChange(
             (event, session) => {
                 setUser(session?.user ?? null)
+                setAuthLoading(false)
             }
         )
         return () => listener.subscription.unsubscribe();
@@ -51,13 +52,12 @@ export const AuthProvider = ({ children }) => {
 
 
     const handleLogout = async () => {
-
-        const { error } = await supabase.auth.signOut()
-        if (error) return navigate("/login")
-
+        await supabase.auth.signOut()
+        return navigate("/register")
     }
+    
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSubmit, handleLogout }}>
+        <AuthContext.Provider value={{ user, authLoading, handleLogin, handleSubmit, handleLogout }}>
             {children}
         </AuthContext.Provider>
     )

@@ -4,6 +4,10 @@ import supabase from '../../Helper/Supabase/Supabase';
 import Loader from '../Loader/Loader';
 import Sidebar from '../Sidebar/Sidebar';
 
+import { useAuth } from '../../context/Authentication/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+
+
 const PRIORITIES = [
     { label: "High", value: "high", color: "bg-red-500 text-white shadow-red-200", dot: "bg-red-400" },
     { label: "Medium", value: "medium", color: "bg-amber-400 text-white shadow-amber-200", dot: "bg-amber-400" },
@@ -28,6 +32,10 @@ const NoteBookApp = () => {
     const [search, setSearch] = useState("")
     const [loading, setLoading] = useState(true)
 
+
+    const { user, authLoading } = useAuth()
+    const navigate = useNavigate()
+
     const filterNotes = notes.filter(note => {
         if (filter === 'done') return note.iscompleted;
         if (filter === 'favs') return note.isfavourite;
@@ -40,6 +48,11 @@ const NoteBookApp = () => {
 
         return filter && matchSearch;
     })
+
+    useEffect(() => {
+        if (authLoading) return
+        if (!user) navigate("/register")
+    }, [user, authLoading])
 
     useEffect(() => {
         fetchTodo()
@@ -108,7 +121,7 @@ const NoteBookApp = () => {
                         title,
                         description,
                         priority,
-                        user_id   // 👈 now correctly set
+                        user_id
                     }
                 ])
 
@@ -156,7 +169,7 @@ const NoteBookApp = () => {
         setIsActive(true)
     }
 
-    if (loading) return <Loader />
+    if (authLoading) return <Loader />
 
     return (
         <div className="relative flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
