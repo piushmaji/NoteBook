@@ -40,7 +40,10 @@ export const AuthProvider = ({ children }) => {
 
         const { data, error } = await supabase.auth.signUp({
             email,
-            password
+            password,
+            options: {
+                data: { name: name.trim() || "User" }
+            }
         })
 
         setLoading(false)
