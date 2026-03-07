@@ -80,6 +80,9 @@ const NoteBookApp = () => {
 
         if (!title.trim()) return
 
+        const { data: { user } } = await supabase.auth.getUser()
+        const user_id = user.id
+
         if (editingNote) {
 
             const { error } = await supabase
@@ -100,7 +103,14 @@ const NoteBookApp = () => {
 
             const { error } = await supabase
                 .from("notes")
-                .insert([{ title, description, priority }])
+                .insert([
+                    {
+                        title,
+                        description,
+                        priority,
+                        user_id   // 👈 now correctly set
+                    }
+                ])
 
             if (error) {
                 console.error(error)

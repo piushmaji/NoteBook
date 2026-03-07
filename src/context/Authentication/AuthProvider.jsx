@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
         const getUser = async () => {
             const { data } = await supabase.auth.getUser()
             setUser(data.user)
+
         }
         getUser();
 
@@ -43,7 +44,8 @@ export const AuthProvider = ({ children }) => {
             password,
             options: {
                 data: { name: name.trim() || "User" }
-            }
+            },
+
         })
 
         setLoading(false)
@@ -77,7 +79,7 @@ export const AuthProvider = ({ children }) => {
 
     const handleLogout = async () => {
 
-        const { error } = supabase.auth.signOut()
+        const { error } = await supabase.auth.signOut()
         if (error) return navigate("/login")
 
     }
