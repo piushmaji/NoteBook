@@ -46,7 +46,7 @@ const NoteBookApp = () => {
             || note.description?.toLowerCase().includes(q)
             || note.priority?.toLowerCase().includes(q);
 
-        return filter && matchSearch;
+        return matchSearch;
     })
 
     // useEffect(() => {
@@ -55,15 +55,14 @@ const NoteBookApp = () => {
     // }, [user, authLoading])
 
     useEffect(() => {
-        fetchTodo()
-    }, [])
+        if (user) fetchTodo()
+    }, [user])
 
     async function toggleComplete(id, currentStatus) {
         const { data, error } = await supabase
             .from("notes")
             .update({ iscompleted: !currentStatus })
             .eq("id", id)
-            .select()
         if (error) console.error("Error Message:", error.message);
         setNotes(prev => prev.map(note => note.id == id ? { ...note, iscompleted: !currentStatus } : note))
     }
@@ -73,14 +72,26 @@ const NoteBookApp = () => {
             .from("notes")
             .update({ isfavourite: !currentStatus })
             .eq("id", id)
-            .select()
+
         if (error) console.error("Error Message:", error.message);
         setNotes(prev => prev.map(note => note.id == id ? { ...note, isfavourite: !currentStatus } : note))
     }
 
     async function fetchTodo() {
         setLoading(true)
-        const { data, error } = await supabase.from("notes").select("*").order("created_at", { ascending: false })
+        if (!user) return
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            setLoading(false)
+            return
+        }
+
+        const { data, error } = await supabase
+            .from("notes")
+            .select("*")
+            .eq("user_id", user.id)
+
         if (error) console.error("Error Message:", error.message);
         else setNotes(data)
 
@@ -94,6 +105,12 @@ const NoteBookApp = () => {
         if (!title.trim()) return
 
         const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            console.error("User not logged in")
+            return
+        }
+
         const user_id = user.id
 
         if (editingNote) {
@@ -353,7 +370,7 @@ const NoteBookApp = () => {
                             <footer className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
                                 <div className="flex gap-4 text-slate-400">
                                     <Clock size={20} />
-                                    <span className="text-sm font-medium">Edited {timeAgo(filterNotes.created_at)} ago</span>
+                                    <span className="text-sm font-medium">Edited {timeAgo(editingNote?.created_at)} ago</span>
                                 </div>
                                 <button onClick={saveNote}
                                     className="rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white transition-transform active:scale-95">
