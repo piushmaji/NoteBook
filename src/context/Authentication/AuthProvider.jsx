@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
-        return navigate("/register")
+        return navigate("/registration")
     }
     
     return (

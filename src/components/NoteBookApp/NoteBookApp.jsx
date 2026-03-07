@@ -49,10 +49,10 @@ const NoteBookApp = () => {
         return filter && matchSearch;
     })
 
-    useEffect(() => {
-        if (authLoading) return
-        if (!user) navigate("/register")
-    }, [user, authLoading])
+    // useEffect(() => {
+    //     if (authLoading) return
+    //     if (!user) navigate("/registration")
+    // }, [user, authLoading])
 
     useEffect(() => {
         fetchTodo()
