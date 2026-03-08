@@ -197,7 +197,7 @@ const NoteBookApp = () => {
     if (loading) return (<Loader />)
 
     return (
-        <div className="relative flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">
+        <div className="relative flex min-h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700  overflow-x-hidden pb-24">
 
             {/* --- SIDEBAR --- */}
             <div className='absolute z-50'>
@@ -210,15 +210,15 @@ const NoteBookApp = () => {
                         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Note Book</h1>
                         <p className="mt-1 text-slate-500">Simplify your thoughts, execute your vision.</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
+                        <div className="relative flex-1 md:flex-none min-w-0">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search notes..."
-                                className="h-11 w-64 rounded-2xl border border-slate-200 bg-white pl-10 pr-9 text-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                className="h-11 w-full min-w-0 md:w-64 rounded-2xl border border-slate-200 bg-white pl-9 md:pl-10 pr-9 text-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
                             />
                             {search && (
                                 <button
@@ -229,7 +229,7 @@ const NoteBookApp = () => {
                             )}
                         </div>
                         <button onClick={() => setIsActive(!isActive)}
-                            className="flex h-11 items-center gap-2 rounded-2xl bg-slate-900 px-5 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.03] active:scale-95">
+                            className="flex h-11 items-center gap-2 rounded-2xl bg-slate-900 px-5 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.03] active:scale-95 justify-center w-full md:w-auto">
                             <Plus size={18} /><span>New Entry</span>
                         </button>
                     </div>
@@ -330,8 +330,8 @@ const NoteBookApp = () => {
             {/* --- MODAL --- */}
             {
                 isActive && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-md">
-                        <div className="w-full max-w-3xl scale-100 rounded-[2.5rem] border border-white/20 bg-white p-10 shadow-2xl shadow-black/20 transition-all">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-3 sm:p-4 backdrop-blur-md">
+                        <div className="w-full max-w-3xl scale-100  border border-white/20 bg-white  rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10shadow-2xl shadow-black/20 transition-all">
                             <div className="mb-8 flex items-center justify-between">
                                 <span className="rounded-full bg-indigo-50 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-indigo-600 ring-1 ring-indigo-100">Focus Mode</span>
                                 <button
@@ -346,12 +346,12 @@ const NoteBookApp = () => {
                                 value={title}
                                 type="text"
                                 placeholder='Your Notes Title'
-                                className="w-full bg-transparent text-5xl font-black tracking-tight text-slate-900 focus:outline-none"
+                                className="w-full bg-transparent text-3xl sm:text-5xl font-black tracking-tight text-slate-900 focus:outline-none"
                             />
                             <textarea
                                 onChange={(e) => setDescription(e.target.value)}
                                 value={description}
-                                className="mt-6 min-h-75 w-full resize-none bg-transparent text-xl leading-relaxed text-slate-600 focus:outline-none"
+                                className="mt-6  w-full resize-none bg-transparent text-base sm:text-xl leading-relaxed text-slate-600 focus:outline-none min-h-40 sm:min-h-75"
                                 placeholder="Start typing your vision..."
                             />
 
@@ -363,7 +363,7 @@ const NoteBookApp = () => {
                                         <button
                                             key={p.value}
                                             onClick={() => setPriority(p.value)}
-                                            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold shadow-md transition-all duration-200 hover:scale-105 active:scale-95
+                                            className={`flex items-center flex-wrap gap-2 rounded-xl px-4 py-2 text-sm font-bold shadow-md transition-all duration-200 hover:scale-105 active:scale-95
                                             ${priority === p.value
                                                     ? `${p.color} shadow-md scale-105`
                                                     : "bg-slate-100 text-slate-500 hover:bg-slate-200 shadow-none"
@@ -375,13 +375,13 @@ const NoteBookApp = () => {
                                 </div>
                             </div>
 
-                            <footer className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
+                            <footer className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6 flex-col sm:flex-row sm:items-center gap-4 sm:gap-0">
                                 <div className="flex gap-4 text-slate-400">
                                     <Clock size={20} />
                                     <span className="text-sm font-medium">Edited {timeAgo(editingNote?.created_at)} ago</span>
                                 </div>
                                 <button onClick={saveNote}
-                                    className="rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white transition-transform active:scale-95">
+                                    className="rounded-2xl bg-slate-900  w-full sm:w-auto px-8 py-3 text-center font-bold text-white transition-transform active:scale-95">
                                     {editingNote ? "Update" : "Save Changes"}
                                 </button>
                             </footer>
