@@ -43,15 +43,12 @@ const NoteBookApp = () => {
     }
 
     const filterNotes = notes
-        .filter((notes) => {
-            if (filter === "favs") return notes.isfavourite;
-            if (filter === "done") return notes.iscompleted;
-            return true;
-        })
-        .filter((notes) =>
-            notes.title.toLowerCase().includes(search.toLowerCase()) ||
-            notes.description?.toLowerCase().includes(search.toLowerCase())
+        .filter((note) => note && (filter === "all" || (filter === "favs" ? note.isfavourite : filter === "done" ? note.iscompleted : true)))
+        .filter((note) =>
+            note.title?.toLowerCase().includes(search.toLowerCase()) ||
+            note.description?.toLowerCase().includes(search.toLowerCase())
         )
+
 
     useEffect(() => {
 
@@ -68,6 +65,7 @@ const NoteBookApp = () => {
 
     }, [user, authLoading])
 
+    //fetching notes
     async function fetchNotes() {
 
         setLoading(true)
@@ -88,35 +86,101 @@ const NoteBookApp = () => {
         setLoading(false)
 
     }
+
+
+    //Save and edit all notes
     async function saveNote() {
 
         if (!title.trim()) return;
 
-        const { error } = await supabase
-            .from("notes")
-            .insert([
-                {
-                    title,
-                    description,
-                    priority,
-                    user_id: user.id
-                }
-            ])
+        if (editingNote) {
+            const { error } = await supabase
+                .from("notes")
+                .update({ title, description, priority })
+                .eq("user_id", user.id)
+                .eq("id", editingNote.id)
 
-        if (error) {
-            console.error(error.message)
-            return
+            if (error) console.error(error.message)
+
         } else {
-            console.log("Save Notes");
+            const { error } = await supabase
+                .from("notes")
+                .insert([{ title, description, priority, user_id: user.id }])
+
+            if (error) console.error(error.message)
         }
 
         setTitle("")
         setDescription("")
         setPriority("medium")
         setIsActive(false)
+        setEditingNote(null)
         fetchNotes()
     }
 
+
+    //Save and edit all notes
+    async function deleteNote(id) {
+
+        const { error } = await supabase
+            .from("notes")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("id", id)
+
+        if (error) console.error(error.message);
+        fetchNotes()
+    }
+
+
+    //toggle favourite notes
+    async function toggleFavourite(id, currentStatus) {
+        const { error } = await supabase
+            .from("notes")
+            .update({ isfavourite: !currentStatus })
+            .eq("id", id)
+            .eq("user_id", user.id)
+
+        if (error) {
+            console.error(error.message)
+            return
+        }
+
+        setNotes(notes.map(note =>
+            note.id === id ? { ...note, isfavourite: !currentStatus } : note
+        ))
+
+    }
+
+
+    //toggle Complete notes
+    async function toggleComplete(id, currentStatus) {
+
+        const { error } = await supabase
+            .from("notes")
+            .update({ iscompleted: !currentStatus })
+            .eq("id", id)
+            .eq("user_id", user.id)
+
+        if (error) {
+            console.error(error.message)
+            return;
+        }
+
+        setNotes(notes.map(note => (
+            note.id === id ? { ...note, iscompleted: !currentStatus } : note
+        )))
+
+    }
+
+    //Open notes for seen in full with
+    const openNote = (note) => {
+        setIsActive(true)
+        setEditingNote(note)
+        setTitle(note.title)
+        setDescription(note.description)
+        setPriority(note.priority)
+    }
 
     if (authLoading) return (<Loader />)
     if (loading) return (<Loader />)
@@ -218,7 +282,7 @@ const NoteBookApp = () => {
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation()
-                                            deleteTodo(note.id)
+                                            deleteNote(note.id)
                                         }
                                         }
                                         title="Delete note"

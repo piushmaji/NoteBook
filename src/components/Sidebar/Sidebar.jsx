@@ -91,9 +91,8 @@ const Sidebar = ({ filter, setFilter }) => {
                 .nav-tap { -webkit-tap-highlight-color: transparent; }
             `}</style>
 
-            {/* ══════════════════════════════════════════
-                DESKTOP SIDEBAR — hidden below lg
-            ══════════════════════════════════════════ */}
+            {/* DESKTOP SIDEBAR — hidden below lg*/}
+
             <aside className="fixed left-0 top-0 hidden h-full w-20 flex-col items-center border-r border-slate-200/60 bg-white/40 pb-8 pt-8 backdrop-blur-xl lg:flex">
 
                 {/* Logo */}
@@ -171,9 +170,9 @@ const Sidebar = ({ filter, setFilter }) => {
                 </div>
             </aside>
 
-            {/* ══════════════════════════════════════════
-                MOBILE BOTTOM NAV — visible only below lg
-            ══════════════════════════════════════════ */}
+
+            {/*MOBILE BOTTOM NAV — visible only below lg*/}
+
             <nav className="mobile-nav-bar lg:hidden fixed bottom-0 left-0 right-0 z-50">
                 <div className="flex items-center justify-around px-4 py-2 pb-[max(8px,env(safe-area-inset-bottom))]">
 
