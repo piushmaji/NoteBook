@@ -314,7 +314,7 @@ const NoteBookApp = () => {
                             </div>
 
                             {/* TAGS */}
-                            <div className="mt-4 flex flex-wrap gap-2 pt-2 ">
+                            <div className="mt-auto flex flex-wrap gap-2 pt-4 ">
                                 <span className={`flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold uppercase ${priorityTagStyles[note.priority] ?? priorityTagStyles.medium}`}>
                                     #{note.priority ?? "medium"}
                                 </span>
