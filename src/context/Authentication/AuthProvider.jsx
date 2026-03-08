@@ -7,57 +7,91 @@ const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null)
-    const [mode, setMode] = useState("login");
-    const [showPass, setShowPass] = useState(false);
-
     const [authLoading, setAuthLoading] = useState(true)
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false)
+
     const navigate = useNavigate();
 
     useEffect(() => {
 
-        const getUser = async () => {
-            const { data } = await supabase.auth.getUser()
-            setUser(data.user)
-            setAuthLoading(false)
-        }
-        getUser();
+        getCurrentUser()
 
         const { data: listener } = supabase.auth.onAuthStateChange(
             (event, session) => {
                 setUser(session?.user ?? null)
-                setAuthLoading(false)
             }
         )
-        return () => listener.subscription.unsubscribe();
+
+        return () => {
+            listener.subscription.unsubscribe()
+        }
+
     }, [])
 
-    const handleLogin = async (email, password) => {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) return error.message
-        navigate('/')
+    //Get current User 
+    async function getCurrentUser() {
+        const { data, error } = await supabase.auth.getSession()
+
+        if (error) {
+            console.error(error.message);
+        }
+
+        setUser(data.session?.user ?? null)
+        setAuthLoading(false)
     }
 
-    const handleSubmit = async (email, password, name) => {
-        setLoading(true)
+    //Login new user and Create New Account
+
+    async function handleSignup({ email, password }) {
+
         const { data, error } = await supabase.auth.signUp({
-            email, password,
-            options: { data: { name: name.trim() || "User" } }
+            email,
+            password
         })
-        setLoading(false)
-        if (error) return error.message
-        navigate('/')
+
+        if (error) {
+            console.error("Signup error:", error.message)
+            return
+        }
+
+        navigate("/login");
+    }
+
+    //Login Existing User 
+    async function handleLogin({ email, password }) {
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        })
+
+        if (error) {
+            console.error(error.message);
+            return;
+        }
+
+        navigate("/")
+
+    }
+
+    //LogOut User 
+    async function handleLogout() {
+
+        const { error } = await supabase.auth.signOut()
+
+        if (error) {
+            console.error(error.message);
+            return;
+        }
+
+        setUser(null);
+        navigate("/login")
+
     }
 
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        return navigate("/registration")
-    }
-    
+
     return (
-        <AuthContext.Provider value={{ user, authLoading, handleLogin, handleSubmit, handleLogout }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, authLoading }}>
             {children}
         </AuthContext.Provider>
     )

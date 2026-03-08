@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import supabase from '../../Helper/Supabase/Supabase';
 import Loader from '../Loader/Loader';
 import Sidebar from '../Sidebar/Sidebar';
+import { format } from "timeago.js"
 
 import { useAuth } from '../../context/Authentication/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 const PRIORITIES = [
@@ -30,163 +31,95 @@ const NoteBookApp = () => {
 
     const [editingNote, setEditingNote] = useState(null)
     const [search, setSearch] = useState("")
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
-
-    const { user, authLoading } = useAuth()
     const navigate = useNavigate()
 
-    const filterNotes = notes.filter(note => {
-        if (filter === 'done') return note.iscompleted;
-        if (filter === 'favs') return note.isfavourite;
+    const { user, authLoading } = useAuth()
 
-        const q = search.trim().toLowerCase();
-        const matchSearch = !q
-            || note.title?.toLowerCase().includes(q)
-            || note.description?.toLowerCase().includes(q)
-            || note.priority?.toLowerCase().includes(q);
 
-        return matchSearch;
-    })
+    function timeAgo(date) {
+        return format(date)
+    }
 
-    // useEffect(() => {
-    //     if (authLoading) return
-    //     if (!user) navigate("/registration")
-    // }, [user, authLoading])
+    const filterNotes = notes
+        .filter((notes) => {
+            if (filter === "favs") return notes.isfavourite;
+            if (filter === "done") return notes.iscompleted;
+            return true;
+        })
+        .filter((notes) =>
+            notes.title.toLowerCase().includes(search.toLowerCase()) ||
+            notes.description?.toLowerCase().includes(search.toLowerCase())
+        )
 
     useEffect(() => {
-        if (user) fetchTodo()
+
+        if (user) {
+            fetchNotes();
+        }
     }, [user])
 
-    async function toggleComplete(id, currentStatus) {
-        const { data, error } = await supabase
-            .from("notes")
-            .update({ iscompleted: !currentStatus })
-            .eq("id", id)
-        if (error) console.error("Error Message:", error.message);
-        setNotes(prev => prev.map(note => note.id == id ? { ...note, iscompleted: !currentStatus } : note))
-    }
+    useEffect(() => {
 
-    async function toggleFavourite(id, currentStatus) {
-        const { data, error } = await supabase
-            .from("notes")
-            .update({ isfavourite: !currentStatus })
-            .eq("id", id)
-
-        if (error) console.error("Error Message:", error.message);
-        setNotes(prev => prev.map(note => note.id == id ? { ...note, isfavourite: !currentStatus } : note))
-    }
-
-    async function fetchTodo() {
-        setLoading(true)
-        if (!user) return
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (!user) {
-            setLoading(false)
-            return
+        if (!authLoading && !user) {
+            navigate("/login")
         }
+
+    }, [user, authLoading])
+
+    async function fetchNotes() {
+
+        setLoading(true)
 
         const { data, error } = await supabase
             .from("notes")
             .select("*")
             .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
 
-        if (error) console.error("Error Message:", error.message);
-        else setNotes(data)
+        if (error) {
+            console.error(error.message)
+            return;
+        } else {
+            setNotes(data);
+        }
 
-        setTimeout(() => {
-            setLoading(false)
-        }, 1000);
+        setLoading(false)
+
     }
-
     async function saveNote() {
 
-        if (!title.trim()) return
+        if (!title.trim()) return;
 
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (!user) {
-            console.error("User not logged in")
-            return
-        }
-
-        const user_id = user.id
-
-        if (editingNote) {
-
-            const { error } = await supabase
-                .from("notes")
-                .update({
+        const { error } = await supabase
+            .from("notes")
+            .insert([
+                {
                     title,
                     description,
-                    priority
-                })
-                .eq("id", editingNote.id)
+                    priority,
+                    user_id: user.id
+                }
+            ])
 
-            if (error) {
-                console.error(error)
-                return
-            }
-
+        if (error) {
+            console.error(error.message)
+            return
         } else {
-
-            const { error } = await supabase
-                .from("notes")
-                .insert([
-                    {
-                        title,
-                        description,
-                        priority,
-                        user_id
-                    }
-                ])
-
-            if (error) {
-                console.error(error)
-                return
-            }
-
+            console.log("Save Notes");
         }
-
-        fetchTodo()
 
         setTitle("")
         setDescription("")
         setPriority("medium")
-        setEditingNote(null)
         setIsActive(false)
+        fetchNotes()
     }
 
 
-    async function deleteTodo(id) {
-        const { error } = await supabase.from("notes").delete().eq("id", id)
-        if (error) {
-            console.error("Delete failed:", error)
-            return
-        }
-        fetchTodo()
-    }
-    function timeAgo(timestamp) {
-        const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
-        const intervals = { year: 31536000, month: 2592000, day: 86400, hour: 3600, minute: 60 };
-        for (let key in intervals) {
-            const value = Math.floor(seconds / intervals[key]);
-            if (value >= 1) return `${value} ${key}${value > 1 ? "s" : ""} ago`;
-        }
-        return "Just now";
-    }
-
-
-    function openNote(note) {
-        setEditingNote(note)
-        setTitle(note.title)
-        setDescription(note.description)
-        setPriority(note.priority)
-        setIsActive(true)
-    }
-
-    if (authLoading) return <Loader />
+    if (authLoading) return (<Loader />)
+    if (loading) return (<Loader />)
 
     return (
         <div className="relative flex h-screen w-full bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700">

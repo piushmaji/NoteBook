@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/Authentication/AuthProvider";
 
 const RegistrationPage = () => {
     const [name, setName] = useState("");
@@ -12,6 +13,9 @@ const RegistrationPage = () => {
 
     const passwordMatch = confirmPassword && confirmPassword === password;
     const passwordMismatch = confirmPassword && confirmPassword !== password;
+
+    const { handleSignup } = useAuth()
+
 
     return (
         <div className="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4">
@@ -28,21 +32,6 @@ const RegistrationPage = () => {
 
                 {/* Card */}
                 <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 space-y-5">
-
-                    {/* Name */}
-                    <div>
-                        <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Full Name</label>
-                        <div className="relative">
-                            <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="John Doe"
-                                className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 focus:bg-white transition-all"
-                            />
-                        </div>
-                    </div>
 
                     {/* Email */}
                     <div>
@@ -105,7 +94,10 @@ const RegistrationPage = () => {
 
                     {/* Submit */}
                     <button
-                        disabled={!name.trim() || !email.trim() || !password.trim() || passwordMismatch || !confirmPassword}
+                        onClick={() => {
+                            handleSignup({ email, password })
+                        }}
+                        disabled={!email.trim() || !password.trim() || passwordMismatch || !confirmPassword}
                         className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                         Create Account
                         <ArrowRight size={16} />

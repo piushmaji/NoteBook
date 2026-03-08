@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/Authentication/AuthProvider";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPass, setShowPass] = useState(false);
+
+    const { handleLogin } = useAuth()
+
 
     return (
         <div className="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4">
@@ -64,6 +68,9 @@ const LoginPage = () => {
 
                     {/* Submit */}
                     <button
+                        onClick={() => {
+                            handleLogin({ email, password })
+                        }}
                         disabled={!email.trim() || !password.trim()}
                         className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                         Sign In
