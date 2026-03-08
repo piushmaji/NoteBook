@@ -36,17 +36,17 @@
 <div align="center">
 
 ### 🔐 Login & Signup
-<img src="public/screenshots/5.png" alt="Login Screen" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
+<img src="./public/Screenshots/5.png" alt="Login Screen" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
 
 <br/><br/>
 
 ### 🗂️ Dashboard — Your Notes at a Glance
-<img src="public/screenshots/3.png" alt="Dashboard" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
+<img src="./public/Screenshots/3.png" alt="Dashboard" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
 
 <br/><br/>
 
 ### ✏️ Create & Edit Notes
-<img src="public/screenshots/2.png" alt="Note Editor" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
+<img src="./public/Screenshots/2.png" alt="Note Editor" width="80%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" />
 
 </div>
 
