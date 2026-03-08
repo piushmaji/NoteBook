@@ -37,13 +37,16 @@ const App = () => {
           },
           error: {
             iconTheme: {
-              primary: "#7c3aed",
-              secondary: "#ede9fe",
+              primary: "#f43f5e",
+              secondary: "#fff1f2",
             },
             style: {
-              background: "rgba(255, 255, 255, 0.97)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-              boxShadow: "0 4px 24px rgba(239,68,68,0.1), 0 0 0 4px rgba(239,68,68,0.05)",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,241,242,0.95) 100%)",
+              border: "1px solid rgba(244, 63, 94, 0.3)",
+              boxShadow: `0 4px 24px rgba(244, 63, 94, 0.18),
+                          0 0 0 4px rgba(244, 63, 94, 0.06),
+                          inset 0 1px 0 rgba(255,255,255,0.8)`,
+              color: "#881337",
             },
           },
           loading: {

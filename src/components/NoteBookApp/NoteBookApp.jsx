@@ -129,7 +129,7 @@ const NoteBookApp = () => {
     }
 
 
-    //Save and edit all notes
+    //Delete notes
     async function deleteNote(id) {
 
         const { error } = await supabase
