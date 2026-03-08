@@ -285,7 +285,7 @@ const NoteBookApp = () => {
                                 <div className="flex items-center gap-1.5">
                                     <button
                                         onClick={() => openNote(note)}
-                                        className="rounded-full bg-white/80 p-2 text-slate-400 opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:text-slate-900 shadow-sm border border-slate-100">
+                                        className="rounded-full bg-white/80 p-2 text-slate-400 md:opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:text-slate-900 shadow-sm border border-slate-100">
                                         <Maximize2 size={14} />
                                     </button>
 
@@ -297,7 +297,7 @@ const NoteBookApp = () => {
                                         }
                                         }
                                         title="Delete note"
-                                        className="flex h-8 w-8 items-center justify-center rounded-xl border border-transparent bg-white/80 text-slate-300 opacity-0 group-hover:opacity-100 shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 hover:shadow-md hover:shadow-red-100 hover:scale-110 active:scale-95">
+                                        className="flex h-8 w-8 items-center justify-center rounded-xl border border-transparent bg-white/80 text-slate-300 md:opacity-0 group-hover:opacity-100 shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 hover:shadow-md hover:shadow-red-100 hover:scale-110 active:scale-95">
                                         <Trash2 size={14} />
                                     </button>
                                 </div>
@@ -331,7 +331,7 @@ const NoteBookApp = () => {
             {
                 isActive && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-3 sm:p-4 backdrop-blur-md">
-                        <div className="w-full max-w-3xl scale-100  border border-white/20 bg-white  rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10shadow-2xl shadow-black/20 transition-all">
+                        <div className="w-full max-w-3xl scale-100  border border-white/20 bg-white  rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10 shadow-2xl shadow-black/20 transition-all">
                             <div className="mb-8 flex items-center justify-between">
                                 <span className="rounded-full bg-indigo-50 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-indigo-600 ring-1 ring-indigo-100">Focus Mode</span>
                                 <button
