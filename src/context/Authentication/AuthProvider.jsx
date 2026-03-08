@@ -57,6 +57,20 @@ export const AuthProvider = ({ children }) => {
         navigate("/login");
     }
 
+    // sign In With Google
+    async function signInWithGoogle() {
+
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google"
+        })
+
+        if (error) {
+            toast.error(error.message)
+        }
+
+    }
+
+
     //Login Existing User 
     async function handleLogin({ email, password }) {
 
@@ -92,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, authLoading }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, authLoading, signInWithGoogle }}>
             {children}
         </AuthContext.Provider>
     )

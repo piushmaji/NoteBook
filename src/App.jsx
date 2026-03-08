@@ -3,6 +3,7 @@ import NoteBookApp from './components/NoteBookApp/NoteBookApp'
 import LoginPage from './components/Auth/LoginPage'
 import RegistrationPage from './components/Auth/RegistrationPage'
 import { Toaster } from 'react-hot-toast';
+import ForgotPassword from './components/Auth/ForgotPassword';
 
 const App = () => {
   return (
@@ -65,6 +66,7 @@ const App = () => {
         <Route path='/' element={<NoteBookApp />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/registration' element={<RegistrationPage />} />
+        <Route path='/forgotpassword' element={<ForgotPassword />} />
       </Routes>
     </>
   )
