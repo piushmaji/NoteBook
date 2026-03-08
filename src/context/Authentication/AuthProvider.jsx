@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import supabase from "../../Helper/Supabase/Supabase";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext()
 
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         const { data, error } = await supabase.auth.getSession()
 
         if (error) {
-            console.error(error.message);
+            toast.error(error.message)
         }
 
         setUser(data.session?.user ?? null)
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         })
 
         if (error) {
-            console.error("Signup error:", error.message)
+            toast.error(error.message)
             return
         }
 
@@ -65,10 +66,10 @@ export const AuthProvider = ({ children }) => {
         })
 
         if (error) {
-            console.error(error.message);
+            toast.error(error.message)
             return;
         }
-
+        setTimeout(() => toast.success("Time to fill your Notebook!"), 500);
         navigate("/")
 
     }
@@ -79,10 +80,10 @@ export const AuthProvider = ({ children }) => {
         const { error } = await supabase.auth.signOut()
 
         if (error) {
-            console.error(error.message);
+            toast.error(error.message)
             return;
         }
-
+        setTimeout(() => toast.success("See you soon, Champ!"), 500);
         setUser(null);
         navigate("/login")
 

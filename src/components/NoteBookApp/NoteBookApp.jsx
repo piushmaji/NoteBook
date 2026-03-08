@@ -79,7 +79,7 @@ const NoteBookApp = () => {
             .order("created_at", { ascending: false })
 
         if (error) {
-            console.error(error.message)
+            toast.error(error.message)
             return;
         } else {
             setNotes(data);
@@ -139,7 +139,7 @@ const NoteBookApp = () => {
             .eq("id", id)
 
         setTimeout(() => toast.success("Note deleted successfully!"), 500);
-        if (error) console.error(error.message);
+        if (error) toast.error(error.message)
         fetchNotes()
     }
 
@@ -153,7 +153,7 @@ const NoteBookApp = () => {
             .eq("user_id", user.id)
 
         if (error) {
-            console.error(error.message)
+            toast.error(error.message)
             return
         }
 
@@ -174,7 +174,7 @@ const NoteBookApp = () => {
             .eq("user_id", user.id)
 
         if (error) {
-            console.error(error.message)
+            toast.error(error.message)
             return;
         }
 

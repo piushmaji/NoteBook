@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LayoutGrid, Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/Authentication/AuthProvider";
+import toast from "react-hot-toast";
 
 const RegistrationPage = () => {
     const [name, setName] = useState("");
