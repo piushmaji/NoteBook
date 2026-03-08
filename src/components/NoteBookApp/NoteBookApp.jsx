@@ -9,6 +9,8 @@ import { useAuth } from '../../context/Authentication/AuthProvider';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 
+import toast from 'react-hot-toast';
+
 const PRIORITIES = [
     { label: "High", value: "high", color: "bg-red-500 text-white shadow-red-200", dot: "bg-red-400" },
     { label: "Medium", value: "medium", color: "bg-amber-400 text-white shadow-amber-200", dot: "bg-amber-400" },
@@ -100,14 +102,22 @@ const NoteBookApp = () => {
                 .eq("user_id", user.id)
                 .eq("id", editingNote.id)
 
-            if (error) console.error(error.message)
+            setTimeout(() => toast.success("Note updated successfully!"), 500);
+
+            if (error) {
+                toast.error(error.message);
+            }
 
         } else {
             const { error } = await supabase
                 .from("notes")
                 .insert([{ title, description, priority, user_id: user.id }])
 
-            if (error) console.error(error.message)
+            setTimeout(() => toast.success("Note saved successfully!"), 500);
+
+            if (error) {
+                toast.error(error.message);
+            }
         }
 
         setTitle("")
@@ -128,6 +138,7 @@ const NoteBookApp = () => {
             .eq("user_id", user.id)
             .eq("id", id)
 
+        setTimeout(() => toast.success("Note deleted successfully!"), 500);
         if (error) console.error(error.message);
         fetchNotes()
     }
