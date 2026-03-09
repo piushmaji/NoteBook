@@ -141,7 +141,7 @@ const ForgotPassword = () => {
 
                             {/* Email badge */}
                             <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-50 border border-slate-200">
-                                <Mail size={13} className="text-slate-400 flex-shrink-0" />
+                                <Mail size={13} className="text-slate-400 shrink-0" />
                                 <span className="text-xs text-slate-600 truncate">{email}</span>
                             </div>
 
