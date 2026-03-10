@@ -61,7 +61,10 @@ export const AuthProvider = ({ children }) => {
     async function signInWithGoogle() {
 
         const { error } = await supabase.auth.signInWithOAuth({
-            provider: "google"
+            provider: "google",
+            options: {
+                redirectTo: "https://notebookpi.netlify.app"
+            }
         })
 
         if (error) {
